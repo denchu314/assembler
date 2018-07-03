@@ -1,0 +1,204 @@
+input file: test_programs/Ops.asm
+Op:iAdd
+type_bits:	0
+op_bits:	0
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iSub
+type_bits:	0
+op_bits:	2
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iMul
+type_bits:	0
+op_bits:	4
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iDev
+type_bits:	0
+op_bits:	6
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:fAdd
+type_bits:	0
+op_bits:	8
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:fSub
+type_bits:	0
+op_bits:	10
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:fMul
+type_bits:	0
+op_bits:	12
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:fDev
+type_bits:	0
+op_bits:	14
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:and
+type_bits:	1
+op_bits:	0
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:or
+type_bits:	1
+op_bits:	1
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:xor
+type_bits:	1
+op_bits:	2
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:not
+type_bits:	1
+op_bits:	3
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:Lsft
+type_bits:	1
+op_bits:	4
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:Rsft
+type_bits:	1
+op_bits:	5
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:cmp
+type_bits:	1
+op_bits:	6
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:jr
+type_bits:	1
+op_bits:	7
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iAddi
+type_bits:	2
+op_bits:	0
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iSubi
+type_bits:	2
+op_bits:	2
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iMuli
+type_bits:	2
+op_bits:	4
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:iDevi
+type_bits:	2
+op_bits:	6
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:lw
+type_bits:	2
+op_bits:	8
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:st
+type_bits:	2
+op_bits:	9
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:Lsfti
+type_bits:	2
+op_bits:	10
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:Rsfti
+type_bits:	2
+op_bits:	11
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:be
+type_bits:	2
+op_bits:	12
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:bne
+type_bits:	2
+op_bits:	13
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:cmpi
+type_bits:	2
+op_bits:	14
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:j
+type_bits:	3
+op_bits:	0
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
+Op:jal
+type_bits:	3
+op_bits:	1
+dst_bits:	0
+src0_bits:	0
+src1_bits:	0
+
