@@ -11,7 +11,8 @@ SRC1_BITS   =   5
 MINOR_IMM_BITS   =   16
 MAJOR_IMM_BITS   =   26
 
-TYPE_OFFSET =   32 - TYPE_BITS 
+INSTRUCTION_BITS = 32
+TYPE_OFFSET =   INSTRUCTION_BITS - TYPE_BITS 
 OP_OFFSET   =   TYPE_OFFSET - OP_BITS
 DST_OFFSET  =   OP_OFFSET   - DST_BITS
 SRC0_OFFSET =   DST_OFFSET  - SRC0_BITS
@@ -25,6 +26,7 @@ LR  = 1
 I   = 2
 J   = 3
 ERR = 0
+SYS = 5
 
 if len(args) != 2:
     print("usage: " + args[0] + " [assembly_file_path] ")
@@ -36,16 +38,29 @@ rfile = open(args[1], 'r')
 wfile = open("a.bin", 'wb')
 
 line = rfile.readlines()
-
+now_inst_addr = 0
 for index, line in enumerate(line):
     string = line.split()
     op      = string[0]
 
     ######################   
+    # System operation
+    if      op == 'ori':
+        finish_addr = int(string[1], 16)
+        if (finish_addr > now_inst_addr):
+            for now_inst_addr in range(now_inst_addr, finish_addr-4, 4):
+                type_bits = SYS
+                inst = 0
+                now_inst_addr += INSTRUCTION_BITS/8
+                wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
+        else:
+                print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
+                exit()
+    ######################   
     # TYPE and OP bits set
 
     #Calc Register
-    if      op == 'iAdd':
+    elif      op == 'iAdd':
         type_bits   = CR
         op_bits     = 0x0
     elif    op == 'iSub':
@@ -217,7 +232,7 @@ for index, line in enumerate(line):
             print("In line " + str(index) + ", Not implemented dst: " + dst)
             dst_bits = 31
 
-    
+
     ###############################
     # SRC0 set
     #
@@ -382,6 +397,9 @@ for index, line in enumerate(line):
             major_imm_bits    = 0x3ffffff
             print("In line " + str(index) + ", Major immediate value is over 26bit, 0x3ffffff: " + major_imm_bits)
          
+    ###############################
+    # set instruction binary
+    #
     if ((type_bits == CR)|(type_bits == LR)):
         inst = (type_bits << TYPE_OFFSET) + (op_bits << OP_OFFSET) + (dst_bits << DST_OFFSET) + (src0_bits << SRC0_OFFSET) + (src1_bits << SRC1_OFFSET)
     elif (type_bits == I):
@@ -389,6 +407,11 @@ for index, line in enumerate(line):
     elif (type_bits == J):
         inst = (type_bits << TYPE_OFFSET) + (op_bits << OP_OFFSET) + (major_imm_bits << MAJOR_IMM_OFFSET)
 
+    now_inst_addr += INSTRUCTION_BITS/8
+
+    ###############################
+    # DEBUG info
+    #
     if ((type_bits == CR) | (type_bits == LR)):
         print("Op:"  + op)
         print("type_bits:\t"  + str(type_bits))
@@ -412,5 +435,8 @@ for index, line in enumerate(line):
         print("major_imm_bits:\t"   + str(major_imm_bits))
         print("")
 
+    ###############################
+    # write instruction binary
+    #
     wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
 

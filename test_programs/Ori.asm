@@ -1,0 +1,2 @@
+ori	0x7c00
+iAdd	ZERO	ZERO	ZERO
