@@ -31,6 +31,8 @@ SYS = 5
 
 OUTPUT_FILENAME = "a.bin"
 
+
+IGFLAG = 0
 REMOVE_CMD = "rm " + OUTPUT_FILENAME
 #print(REMOVE_CMD)
 
@@ -63,6 +65,9 @@ for index, line in enumerate(line):
                 print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
                 #subprocess.call(REMOVE_CMD)
                 exit()
+    elif    op == '#':
+        type_bits = SYS
+        IGFLAG = 1
     ######################   
     # TYPE and OP bits set
 
@@ -424,7 +429,11 @@ for index, line in enumerate(line):
     elif (type_bits == J):
         inst = (type_bits << TYPE_OFFSET) + (op_bits << OP_OFFSET) + (major_imm_bits << MAJOR_IMM_OFFSET)
 
-    now_inst_addr += INSTRUCTION_BITS/8
+    ##############################
+    # address increment
+    #
+    if (IGFLAG == 0):
+        now_inst_addr += INSTRUCTION_BITS/8
 
     ###############################
     # DEBUG info
@@ -455,5 +464,7 @@ for index, line in enumerate(line):
     ###############################
     # write instruction binary
     #
-    wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
+    if (IGFLAG == 0):
+        wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
+    IGFLAG = 0
 
