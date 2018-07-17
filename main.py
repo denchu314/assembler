@@ -474,7 +474,9 @@ for index, line in enumerate(line):
                 print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
                 exit()
 
-            now_inst_addr += INSTRUCTION_BITS/8
+        
+
+            
 
     ###############################
     # DEBUG info

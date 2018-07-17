@@ -27,3 +27,5 @@ bne 	S5 T0 10
 cmpi 	S5 T0 0xb
 j 	0xc
 jal 	0xd
+# ad asdfadfa
+ori 0x100
