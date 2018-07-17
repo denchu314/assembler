@@ -32,7 +32,7 @@ SYS = 5
 OUTPUT_FILENAME = "a.bin"
 
 class Bits:
-    def __init__ (self,)
+    def __init__ (self,):
         self.type = 0
         self.op = 0
         self.dst = 0
@@ -370,6 +370,7 @@ def set_src1(line, bits):
         exit()
 
 def set_minor_imm(line, bits):
+    string = line.split()
     bits.minor_imm    = int(string[3], 16)
     if (bits.minor_imm > 0xffff):
         bits.minor_imm = 0xffff
@@ -377,6 +378,7 @@ def set_minor_imm(line, bits):
         exit()
 
 def set_major_imm(line, bits):
+    string = line.split()
     bits.major_imm    = int(string[1], 16)
     if (bits.major_imm > 0x3ffffff):
         bits.major_imm    = 0x3ffffff
@@ -451,7 +453,6 @@ for index, line in enumerate(line):
     # J
     #
     elif(bits.type == J):
-        set_dst(line, bits)
         set_major_imm(line, bits)
         inst = set_inst_binary_J(bits)
         write_to_file(inst)
@@ -474,7 +475,6 @@ for index, line in enumerate(line):
                 exit()
 
             now_inst_addr += INSTRUCTION_BITS/8
-        else:
 
     ###############################
     # DEBUG info

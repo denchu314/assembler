@@ -1,2 +1,6 @@
+iAddi	S0	S0	0x5
+iAddi	S0	S0	0x5
+iAddi	S0	S0	0x5
 ori	0x7c00
-iAdd	ZERO	ZERO	ZERO
+iAddi	S0	S0	0x5
+iAddi	S0	S0	0x5
