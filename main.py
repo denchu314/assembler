@@ -1,4 +1,5 @@
 import sys
+#import subprocess
 
 args = sys.argv
 
@@ -25,8 +26,13 @@ CR  = 0
 LR  = 1
 I   = 2
 J   = 3
-ERR = 0
+ERR = 4
 SYS = 5
+
+OUTPUT_FILENAME = "a.bin"
+
+REMOVE_CMD = "rm " + OUTPUT_FILENAME
+#print(REMOVE_CMD)
 
 if len(args) != 2:
     print("usage: " + args[0] + " [assembly_file_path] ")
@@ -35,7 +41,7 @@ else:
     print("input file: " + args[1])
 
 rfile = open(args[1], 'r')
-wfile = open("a.bin", 'wb')
+wfile = open(OUTPUT_FILENAME, 'wb')
 
 line = rfile.readlines()
 now_inst_addr = 0
@@ -55,6 +61,7 @@ for index, line in enumerate(line):
                 wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
         else:
                 print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
+                #subprocess.call(REMOVE_CMD)
                 exit()
     ######################   
     # TYPE and OP bits set
@@ -154,10 +161,11 @@ for index, line in enumerate(line):
         type_bits   = J
         op_bits     = 0x1
     else:
-        print("In line " + str(index) + ", Not implemented op: " + op)
+        print("Error:In line " + str(index) + ", Not implemented op: " + op)
         type_bits   = ERR
         op_bits     = 0xf
-
+        #returncode = subprocess.call(REMOVE_CMD)
+        exit()
 
     ###############################
     # DST set
@@ -229,9 +237,10 @@ for index, line in enumerate(line):
         elif dst == 'RA': 
             dst_bits = 31
         else:
-            print("In line " + str(index) + ", Not implemented dst: " + dst)
+            print("Error:In line " + str(index) + ", Not implemented dst: " + dst)
             dst_bits = 31
-
+            #subprocess.call(REMOVE_CMD)
+            exit()
 
     ###############################
     # SRC0 set
@@ -303,8 +312,10 @@ for index, line in enumerate(line):
         elif src0 == 'RA': 
             src0_bits = 31
         else:
-            print("In line " + str(index) + ", Not implemented src0: " + src0)
+            print("Error:In line " + str(index) + ", Not implemented src0: " + src0)
             src0_bits = 31
+            #subprocess.call(REMOVE_CMD)
+            exit()
 
     ###############################
     # SRC1 set
@@ -376,8 +387,10 @@ for index, line in enumerate(line):
         elif src1 == 'RA': 
             src1_bits = 31
         else:
-            print("In line " + str(index) + ", Not implemented src1: " + src1)
+            print("Error:In line " + str(index) + ", Not implemented src1: " + src1)
             src1_bits = 31
+            #subprocess.call(REMOVE_CMD)
+            exit()
 
     ###############################
     # MINOR_IMMEDIATE set
@@ -386,7 +399,9 @@ for index, line in enumerate(line):
         minor_imm_bits    = int(string[3], 16)
         if (minor_imm_bits > 0xffff):
             minor_imm_bits = 0xffff
-            print("In line " + str(index) + ", Minor immediate value is over 16bit, 0xffff: " + minor_imm_bits)
+            print("Error:In line " + str(index) + ", Minor immediate value is over 16bit, 0xffff: " + minor_imm_bits)
+            #subprocess.call(REMOVE_CMD)
+            exit()
 
     ###############################
     # SRC1 set
@@ -395,8 +410,10 @@ for index, line in enumerate(line):
         major_imm_bits    = int(string[1], 16)
         if (major_imm_bits > 0x3ffffff):
             major_imm_bits    = 0x3ffffff
-            print("In line " + str(index) + ", Major immediate value is over 26bit, 0x3ffffff: " + major_imm_bits)
-         
+            print("Error:In line " + str(index) + ", Major immediate value is over 26bit, 0x3ffffff: " + major_imm_bits)
+            #subprocess.call(REMOVE_CMD)
+            exit()
+
     ###############################
     # set instruction binary
     #
