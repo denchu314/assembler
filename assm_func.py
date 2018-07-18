@@ -27,7 +27,22 @@ ERR = 4
 SYS = 5
 
 def makeCallLine(call_func_addr, call_arg0, call_arg1, call_arg2, call_arg3):
-    call_line = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00','iAddi A0 ZERO '] + call_arg0 + ['', 'iAddi A1 ZERO '] + call_arg1 + ['', 'iAddi A2 ZERO '] + call_arg2 ['', 'iAddi A3 ZERO '] + call_arg3 + ['','jal '] + call_func_addr + ['', 'lw A0 SP 0x0C', 'lw A1 SP 0x08', 'lw A2 SP 0x04', 'lw A3 SP 0x00', 'iAddi SP SP 0x10']
+    call_line0 = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00']
+    call_arg0 = 'iAdd A0 ZERO ' + call_arg0 
+    call_arg1 = 'iAdd A1 ZERO ' + call_arg1 
+    call_arg2 = 'iAdd A2 ZERO ' + call_arg2 
+    call_arg3 = 'iAdd A3 ZERO ' + call_arg3 
+    call_func_addr = 'jal ' + str(call_func_addr)
+    call_line1 =  ['lw A0 SP 0x0C', 'lw A1 SP 0x08', 'lw A2 SP 0x04', 'lw A3 SP 0x00', 'iAddi SP SP 0x10']
+    #call_line = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00','iAddi A0 ZERO '] + call_arg0 + ['', 'iAddi A1 ZERO '] + call_arg1 + ['', 'iAddi A2 ZERO '] + call_arg2 ['', 'iAddi A3 ZERO '] + call_arg3 + ['','jal '] + call_func_addr + ['', 'lw A0 SP 0x0C', 'lw A1 SP 0x08', 'lw A2 SP 0x04', 'lw A3 SP 0x00', 'iAddi SP SP 0x10']
+    call_line = call_line0
+    call_line.append(call_arg0)
+    call_line.append(call_arg1)
+    call_line.append(call_arg2)
+    call_line.append(call_arg3)
+    call_line.append(call_func_addr)
+    call_line += call_line1
+    print(call_line)
     return call_line
 
 #call_line = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00','iAddi A0 ZERO '] + call_arg0 + ['iAddi A1 ZERO '] + call_arg1 + ['iAddi A2 ZERO '] + call_arg2 ['iAddi A3 ZERO '] + call_arg3 + ['jal ']
@@ -442,7 +457,7 @@ def set_inst_binary_J(bits):
 def write_to_file(wfile, inst):
     wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
 
-def analyze_file(line, bits, file_descriptor, now_inst_addr, index):
+def analyze_file(line, bits, file_descriptor, now_inst_addr, index, funcTable):
 
     ###############################
     # set TYPE and OP
@@ -502,6 +517,42 @@ def analyze_file(line, bits, file_descriptor, now_inst_addr, index):
     ###############################
     # SYS
     #
+    elif(bits.type == SYS):
+        string = line.split()
+        if (string[0] == 'ori'): 
+            finish_addr = int(string[1], 16)
+            if (finish_addr > now_inst_addr):
+                for now_inst_addr in range(now_inst_addr, finish_addr, 4):
+                    inst = 0
+                    file_descriptor.append(inst)
+                    now_inst_addr += INSTRUCTION_BITS/8
+                return now_inst_addr
+            else:
+                    print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
+                    exit()
+        
+        elif (string[0] == 'call'):
+            call_narg = len(string)
+            if(call_narg != 6):
+                print("Error:In line " + str(index) + ", num of call args must == 6, these args are "  + str(call_narg))
+                exit()
+            else:
+
+                #search
+                for tindex in range(len(funcTable)):
+                    print(funcTable[tindex].funcName)
+                    print(funcTable[tindex].funcAddr)
+                    if (string[1] == funcTable[tindex].funcName):
+                        call_line = makeCallLine(funcTable[tindex].funcAddr, string[2], string[3], string[4], string[5])
+                        for lindex in range(len(call_line)):
+                            now_inst_addr = analyze_file(call_line[lindex], bits, file_descriptor, now_inst_addr, index, funcTable)
+                        return now_inst_addr
+               
+                print('Error: func ' + string[1] + ' is not found in funcTable')
+                print('     : func ' + string[1] + ' is called, but not defined.')
+                exit()
+
+    
     else:
         return now_inst_addr
 

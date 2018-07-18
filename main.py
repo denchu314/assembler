@@ -24,7 +24,8 @@ line = rfile.readlines()
 # declear functable
 funcTable = []
 funcTable.append(Func())
-
+funcTable[0].funcName = 'main'
+funcTable[0].defined = 1
 # buffer to write file
 # 16 byte in head of binary file is reserved to use jump for main
 file_descriptor = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
@@ -38,7 +39,10 @@ for index, line in enumerate(line):
     # check Func define
     #
     string = line.split()
-    if (string[0][-1:] == ':'):
+    if (string[0][:] == 'main:'):
+        funcTable[0].funcAddr = now_inst_addr
+        funcTable[0].called = 1
+    elif (string[0][-1:] == ':'):
         print("into call state")
         print(string[0][0:-1])
         funcTable.append(Func())
@@ -47,28 +51,19 @@ for index, line in enumerate(line):
         funcTable[tindex].funcName = string[0][0:-1]
         funcTable[tindex].funcAddr = now_inst_addr
         funcTable[tindex].defined = 1
+        for i in range(len(funcTable)):
+            print(funcTable[i].funcName)
+            print(funcTable[i].funcAddr)
         for lindex in range(len(arrival_line)):
-            now_inst_addr = analyze_file(arrival_line[lindex], bits, file_descriptor, now_inst_addr, index)
+            now_inst_addr = analyze_file(arrival_line[lindex], bits, file_descriptor, now_inst_addr, index, funcTable)
             viewDebugInfo(arrival_line[lindex].split()[0], bits)        
 
     else: 
-        now_inst_addr = analyze_file(line, bits, file_descriptor, now_inst_addr, index)           
+        now_inst_addr = analyze_file(line, bits, file_descriptor, now_inst_addr, index, funcTable)           
         
         ###############################
         # SYS
         #
-        if(bits.type == SYS):
-            if (string[0] == 'ori'):
-                finish_addr = int(string[1], 16)
-                if (finish_addr > now_inst_addr):
-                    for now_inst_addr in range(now_inst_addr, finish_addr, 4):
-                        inst = 0
-                        file_descriptor.append(inst)
-                        #write_to_file(inst)
-                        now_inst_addr += INSTRUCTION_BITS/8
-                else:
-                    print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
-                    exit()
     
             #elif (string[0] == 'call'):
              #   call_narg = len(string)
@@ -80,6 +75,7 @@ for index, line in enumerate(line):
     
         
 #write file
+file_descriptor[0] = funcTable[0].funcAddr + 0xC0000000
 for index in range(len(file_descriptor)):
     write_to_file(wfile, file_descriptor[index])
 
