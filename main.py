@@ -43,6 +43,36 @@ class Bits:
 
 bits = Bits()
 
+class Func:
+    def __init__(self, name):
+        self.funcName = name
+        self.funcAddr = 0x0
+        self.defined  = 1
+        self.called   = 0
+    
+    def setFuncName(name):
+        self.funcName = name
+    
+    def setFuncAddr(addr):
+        self.funcAddr = addr
+    
+    def defined():
+        self.defined  = 1
+    
+    def called():
+        self.called  = 1
+    
+    def printStatus():
+        print("Func name:" + self.funcName)
+        print("Func addr:{0}".format(self.funcAddr))
+        print("Func defined:{0}".format(self.defined))
+        print("Func called:{0}".format(self.called))
+    
+    def checkStatus():
+        if (self.called==1) and (self.define==0):
+            print("Error: Func" + self.funcName + "is called, but not defined.")
+            exit()
+
 def set_type_and_op(line, bits):
     string = line.split()
     op      = string[0]
@@ -54,7 +84,15 @@ def set_type_and_op(line, bits):
     elif    op == '#':
         bits.type   = SYS
         bits.op     = 0x1
-
+    elif    op == 'call':
+        bits.type   = SYS
+        bits.op     = 0x2
+    elif    op == 'calli':
+        bits.type   = SYS
+        bits.op     = 0x3
+    elif    op == 'return':
+        bits.type   = SYS
+        bits.op     = 0x4
 
     #CR
     elif      op == 'iAdd':
@@ -412,8 +450,23 @@ wfile = open(OUTPUT_FILENAME, 'wb')
 
 line = rfile.readlines()
 now_inst_addr = 0
-for index, line in enumerate(line):
 
+
+file_descriptor = []
+
+for index, line in enumerate(line):
+    
+    ###############################
+    # Func define check
+    #
+    string = line.split()
+    if (string[0][-1:] == ':'):
+        funcTable.append(Func(string[0:-1]))
+    
+    
+    ###############################
+    # set TYPE and OP
+    #
     set_type_and_op(line, bits)
 
     ###############################
@@ -424,7 +477,8 @@ for index, line in enumerate(line):
         set_src0(line, bits)
         set_src1(line, bits)
         inst = set_inst_binary_CR(bits)
-        write_to_file(inst)
+        file_descriptor.append(inst)
+        #write_to_file(inst)
         now_inst_addr += INSTRUCTION_BITS/8
 
     ###############################
@@ -435,7 +489,8 @@ for index, line in enumerate(line):
         set_src0(line, bits)
         set_src1(line, bits)
         inst = set_inst_binary_LR(bits)
-        write_to_file(inst)
+        file_descriptor.append(inst)
+        #write_to_file(inst)
         now_inst_addr += INSTRUCTION_BITS/8
 
     ###############################
@@ -446,7 +501,8 @@ for index, line in enumerate(line):
         set_src0(line, bits)
         set_minor_imm(line, bits)
         inst = set_inst_binary_I(bits)
-        write_to_file(inst)
+        file_descriptor.append(inst)
+        #write_to_file(inst)
         now_inst_addr += INSTRUCTION_BITS/8
 
     ###############################
@@ -455,33 +511,38 @@ for index, line in enumerate(line):
     elif(bits.type == J):
         set_major_imm(line, bits)
         inst = set_inst_binary_J(bits)
-        write_to_file(inst)
+        file_descriptor.append(inst)
+        #write_to_file(inst)
         now_inst_addr += INSTRUCTION_BITS/8
 
     ###############################
     # SYS
     #
     elif(bits.type == SYS):
-        string = line.split()
         if (string[0] == 'ori'):
             finish_addr = int(string[1], 16)
             if (finish_addr > now_inst_addr):
                 for now_inst_addr in range(now_inst_addr, finish_addr, 4):
                     inst = 0
-                    write_to_file(inst)
+                    file_descriptor.append(inst)
+                    #write_to_file(inst)
                     now_inst_addr += INSTRUCTION_BITS/8
             else:
                 print("The ori address must be over now inst address. (now_inst_addr, ori_addr) = (" + now_inst_addr + "," + finish_addr + ")")
                 exit()
 
-        
+        elif (string[0] == 'call'):
+            call_narg = len(string)
+            if (call_narg < 2):
+                print("Error:In line " + str(index) + ", num of call args must >= 2, these args are "  + str(call_narg))
+                if(call_narg == 2):
+                    call_line = ['iAddi SP SP -0x10', 'sw A0 SP 0xC0', 'sw A1 SP 0x80', 'sw A2 SP 0x40', 'sw A3 SP 0x00', 'iAddi A0 ZERO 0xC0', 'iAddi A1 ZERO ZERO', 'iAddi A2 ZERO ZERO', 'iAddi A3 ZERO ZERO', 'jal A3 ZERO ZERO', 'iAddi A3 ZERO ZERO']
 
             
 
     ###############################
     # DEBUG info
     #
-    string = line.split()
     if ((bits.type == CR) | (bits.type == LR)):
         print("Op:"  + string[0])
         print("bits.type:\t"  + str(bits.type))
@@ -504,4 +565,8 @@ for index, line in enumerate(line):
         print("bits.op:\t"    + str(bits.op))
         print("bits.major_imm:\t"   + str(bits.major_imm))
         print("")
+
+#write file
+for index in range(len(file_descriptor)):
+    write_to_file(file_descriptor[index])
 
