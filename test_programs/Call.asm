@@ -1,4 +1,11 @@
 hoge:
 	iAddi	S0	S1	0x12
-main:
-	:
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
+	iAddi	S0	S1	0x12
