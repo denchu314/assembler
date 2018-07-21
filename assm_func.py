@@ -481,7 +481,7 @@ def isHex(val):
     except:
         return False
 
-def binalize_instruction(op, operand0, operand1, operand2, InstBits, index):
+def binalize_instruction(op, operand0, operand1, operand2, InstBits, index, vflag):
 
     ###############################
     # set TYPE and OP
@@ -495,7 +495,8 @@ def binalize_instruction(op, operand0, operand1, operand2, InstBits, index):
         set_dst(operand0, InstBits, index)
         set_src0(operand1, InstBits, index)
         set_src1(operand2, InstBits, index)
-        viewDebugInfo(op, InstBits)
+        if (vflag):
+            viewDebugInfo(op, InstBits)
         return set_inst_binary_CR(InstBits)
     ###############################
     # LR
@@ -504,7 +505,8 @@ def binalize_instruction(op, operand0, operand1, operand2, InstBits, index):
         set_dst(operand0, InstBits, index)
         set_src0(operand1, InstBits, index)
         set_src1(operand2, InstBits, index)
-        viewDebugInfo(op, InstBits)
+        if (vflag):
+            viewDebugInfo(op, InstBits)
         return set_inst_binary_LR(InstBits)
 
     ###############################
@@ -514,7 +516,8 @@ def binalize_instruction(op, operand0, operand1, operand2, InstBits, index):
         set_dst(operand0, InstBits, index)
         set_src0(operand1, InstBits, index)
         set_minor_imm(operand2, InstBits, index)
-        viewDebugInfo(op, InstBits)
+        if (vflag):
+            viewDebugInfo(op, InstBits)
         return set_inst_binary_I(InstBits)
 
     ###############################
@@ -522,7 +525,8 @@ def binalize_instruction(op, operand0, operand1, operand2, InstBits, index):
     #
     elif(InstBits.type == J):
         set_major_imm(operand0, InstBits, index)
-        viewDebugInfo(op, InstBits)
+        if (vflag):
+            viewDebugInfo(op, InstBits)
         return set_inst_binary_J(InstBits)
 
 def viewDebugInfo(op, bits):

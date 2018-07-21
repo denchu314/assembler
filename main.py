@@ -11,11 +11,20 @@ OUTPUT_FILENAME = "a.bin"
 
 bits = Bits()
 
-if len(args) != 2:
-    print("usage: " + args[0] + " [assembly_file_path] ")
+vflag = False
+
+if (len(args) < 2):
+    print("usage: " + args[0] + " [assembly_file_path] [-v]")
     exit()
 else:
     print("input file: " + args[1])
+
+if (len(args) == 3):
+    if(args[2] == '-v'):
+        vflag = True
+    else:
+        print('Error:args[2]:' + args[2] + ' is not defined.')
+        exit()
 
 rfile = open(args[1], 'r')
 wfile_m = open(PREPROCESSED_OUTPUT_FILENAME, 'w')
@@ -52,7 +61,8 @@ InstBits = Bits()
 # PRIPROCESS
 ###################
 for index, line in enumerate(line):
-    print('In line:' + str(index+1)) 
+    if (vflag):
+        print('In line:' + str(index+1)) 
     #
     # check arrival Label
     #
@@ -100,8 +110,10 @@ for index, line in enumerate(line):
     else:
        PIT.append(InstructionTable(op, string[1], string[2], string[3])) 
 
-for i in range(len(PIT)):
+if (vflag):
+    for i in range(len(PIT)):
         wfile_m.write(PIT[i].op + ' ' + PIT[i].operand0 + ' ' + PIT[i].operand1 + ' ' + PIT[i].operand2 + '\n')
+
 #####################
 # REPLACE PHASE
 #####################
@@ -128,12 +140,13 @@ CIT = PIT
 for i in range(len(DAT)):
     CIT[DAT[i].posOfDeparture].operand0 = hex((INSTRUCTION_BITS/8) * DAT[i].posOfArrival)
 
-for i in range(len(CIT)):
-        wfile_m2.write(CIT[i].op + ' ' + CIT[i].operand0 + ' ' + CIT[i].operand1 + ' ' + CIT[i].operand2 + '\n')
+if (vflag):
+    for i in range(len(CIT)):
+            wfile_m2.write(CIT[i].op + ' ' + CIT[i].operand0 + ' ' + CIT[i].operand1 + ' ' + CIT[i].operand2 + '\n')
 
 #
 # binalize and write file
 #
 for i in range(len(CIT)):
-    write_to_file(wfile, binalize_instruction(CIT[i].op, CIT[i].operand0, CIT[i].operand1, CIT[i].operand2, InstBits, i))
+    write_to_file(wfile, binalize_instruction(CIT[i].op, CIT[i].operand0, CIT[i].operand1, CIT[i].operand2, InstBits, i, vflag))
 
