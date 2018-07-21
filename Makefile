@@ -23,6 +23,6 @@ all :
 $(TARGET) : $(OBJS) Makefile
 	$(CC) -o $@ $(OBJS)
 clean :
-	rm *.o
-	rm $(TARGET)
-
+	rm a.bin
+	rm a.prep
+	rm a.comp

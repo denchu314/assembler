@@ -4,7 +4,8 @@ from assm_func import *
 
 args = sys.argv
 
-MOUTPUT_FILENAME = "media"
+PREPROCESSED_OUTPUT_FILENAME = "a.prep"
+COMPLETED_OUTPUT_FILENAME = "a.comp"
 OUTPUT_FILENAME = "a.bin"
 
 
@@ -17,7 +18,8 @@ else:
     print("input file: " + args[1])
 
 rfile = open(args[1], 'r')
-wfile_m = open(MOUTPUT_FILENAME, 'w')
+wfile_m = open(PREPROCESSED_OUTPUT_FILENAME, 'w')
+wfile_m2 = open(COMPLETED_OUTPUT_FILENAME, 'w')
 wfile = open(OUTPUT_FILENAME, 'wb')
 
 line = rfile.readlines()
@@ -50,7 +52,7 @@ InstBits = Bits()
 # PRIPROCESS
 ###################
 for index, line in enumerate(line):
-    print('In line:' + str(index)) 
+    print('In line:' + str(index+1)) 
     #
     # check arrival Label
     #
@@ -59,7 +61,7 @@ for index, line in enumerate(line):
     
     if (isArrivalLabel(string)):
         arrivalLabel = string[0][0:-1]
-        AT.append(LabelTable(arrivalLabel, now_inst_addr, index_of_PI))
+        AT.append(LabelTable(arrivalLabel, len(PIT) ))
     
     #
     # chack SYS instruction
@@ -79,10 +81,18 @@ for index, line in enumerate(line):
     #
     elif (op == 'j' or op == 'jal'):
         if (isHex(string[1])):
-            PIT.append(InstructionTable(op, string[1]))
+            PIT.append(InstructionTable(op, string[1], '0x0', '0x0'))
         else:
-            PIT.append(InstructionTable(op, '0x0'))#pseudp label
-        DT.append(LabelTable(string[1], len(PIT)-1))
+            PIT.append(InstructionTable(op, '0x0', '0x0', '0x0'))#pseudp label
+            DT.append(LabelTable(string[1], len(PIT)-1))
+
+    #
+    # chack not or jr instruction
+    #
+    elif (op == 'not'):
+            PIT.append(InstructionTable(op, string[1], string[2], 'ZERO'))
+    elif (op == 'jr'):
+            PIT.append(InstructionTable(op, 'ZERO', string[1], 'ZERO'))
 
     #
     # set instruction on PIT if type == CR, LR, I
@@ -118,6 +128,8 @@ CIT = PIT
 for i in range(len(DAT)):
     CIT[DAT[i].posOfDeparture].operand0 = hex((INSTRUCTION_BITS/8) * DAT[i].posOfArrival)
 
+for i in range(len(CIT)):
+        wfile_m2.write(CIT[i].op + ' ' + CIT[i].operand0 + ' ' + CIT[i].operand1 + ' ' + CIT[i].operand2 + '\n')
 
 #
 # binalize and write file

@@ -1,6 +1,6 @@
 iAdd 	S5 T0 ASM
 iSub 	S5 T0 ASM
-iMul 	S5 T0 ASM
+iMul 	S5 T0 ASM 
 iDev 	S5 T0 ASM
 fAdd 	S5 T0 ASM
 fSub 	S5 T0 ASM
@@ -19,13 +19,12 @@ iSubi 	S5 T0 2
 iMuli 	S5 T0 3
 iDevi 	S5 T0 4
 lw 	S5 T0 5
-st	S5 T0 6
+sw	S5 T0 6
 Lsfti 	S5 T0 7
 Rsfti 	S5 T0 8
 be 	S5 T0 0x9
 bne 	S5 T0 10
 cmpi 	S5 T0 0xb
-# j 	0xc
-# jal 	0xd
-# ad asdfadfa
-# ori 0x100
+j 	0xc
+jal 	0xd
+ori 0x100

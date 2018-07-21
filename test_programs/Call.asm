@@ -1,10 +1,12 @@
+	j main
 hoge:
-	iAddi	S0	S1	0x12
-	iAddi	S0	S1	0x12
-	iAddi	S0	S1	0x12
-	iAddi	S0	S1	0x12
-	iAddi	S0	S1	0x12
-	iAddi	S0	S1	0x12
+	arrival
+	iAdd	ZERO	ZERO	ZERO	
+	iAdd	ZERO	ZERO	ZERO	
+	iAdd	ZERO	ZERO	ZERO	
+	iAdd	ZERO	ZERO	ZERO	
+	iAdd	ZERO	ZERO	ZERO	
+	iAdd	ZERO	ZERO	ZERO	
 	return
 main:
 	iAdd	S0	S1	ZERO

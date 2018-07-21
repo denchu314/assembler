@@ -27,7 +27,7 @@ ERR = 4
 SYS = 5
 
 def isArrivalLabel(string):
-    if (string[0][-1:0] == ':'):
+    if (string[0][-1:] == ':'):
         return True
     else:
         return False
@@ -55,7 +55,7 @@ def makeCallList(label, call_arg0, call_arg1, call_arg2, call_arg3):
 
 arrival_list = ['iAddi SP SP -0x38', 'sw S0 SP 0x34', 'sw S1 SP 0x30', 'sw S2 SP 0x2C', 'sw S3 SP 0x28', 'sw S4 SP 0x24', 'sw S5 SP 0x20', 'sw S6 SP 0x1C', 'sw S7 SP 0x18', 'sw S8 SP 0x14', 'sw ASM SP 0x10', 'sw GP SP 0x0C', 'sw SP SP 0x08', 'sw FP SP 0x04', 'sw RA SP 0x00']
 
-return_list = ['lw S0 SP 0x34', 'lw S1 SP 0x30', 'lw S2 SP 0x2C', 'lw S3 SP 0x28', 'lw S4 SP 0x24', 'lw S5 SP 0x20', 'lw S6 SP 0x1C', 'lw S7 SP 0x18', 'lw S8 SP 0x14', 'lw ASM SP 0x10', 'lw GP SP 0x0C', 'lw SP SP 0x08', 'lw FP SP 0x04', 'lw RA SP 0x00', 'iAddi SP SP 0x38']
+return_list = ['lw S0 SP 0x34', 'lw S1 SP 0x30', 'lw S2 SP 0x2C', 'lw S3 SP 0x28', 'lw S4 SP 0x24', 'lw S5 SP 0x20', 'lw S6 SP 0x1C', 'lw S7 SP 0x18', 'lw S8 SP 0x14', 'lw ASM SP 0x10', 'lw GP SP 0x0C', 'lw SP SP 0x08', 'lw FP SP 0x04', 'lw RA SP 0x00', 'iAddi SP SP 0x38', 'jr RA']
 
 #def splitter(oplist):
 #    string = oplist.split()
@@ -442,23 +442,32 @@ def ori_proc(finish_addr, PIT):
         print("In ori fin addr must over now addr. (now_addr, fin_addr) = (" + (INSTRUCTION_BITS/8) * len(PIT) + "," + finish_addr + ")")
         exit()
     else:
-        for i in range(len(instructionTable), finish_addr/(INSTRUCTION_BITS/8)):
+        for i in range(len(PIT), int(finish_addr,16)/(INSTRUCTION_BITS/8)):
             PIT.append(InstructionTable('iAdd', 'ZERO', 'ZERO', 'ZERO'))
 
 def call_proc(departureLabel, arg0, arg1, arg2, arg3, PIT, DT):
     call_list = makeCallList(departureLabel, arg0, arg1, arg2, arg3)
     for i in range(len(call_list)):
         string = call_list[i].split()
-        if (string[0] == 'jal'):
-            PIT.append(InstructionTable(string[0], '0x0')) #pseudo label
-            DT.append(LabelTable(string[1], len(PIT)-1))
-        else:
-            PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
+        if (string[0] == 'jal'or string[0] == 'j'):
+            op = string[0]
+            if (isHex(string[1])):
+                PIT.append(InstructionTable(op, string[1], '0x0', '0x0'))
+            else:
+                PIT.append(InstructionTable(op, '0x0', '0x0', '0x0'))#pseudp label
+                DT.append(LabelTable(string[1], len(PIT)-1))
+#            PIT.append(InstructionTable(string[0], '0x0')) #pseudo label
+#            DT.append(LabelTable(string[1], len(PIT)-1))
+#        else:
+#            PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
 
 def return_proc(PIT):
     for i in range(len(return_list)):
         string = return_list[i].split()
-        PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
+        if (string[0] == 'jr'):
+            PIT.append(InstructionTable(string[0], 'ZERO', string[1], 'ZERO')) 
+        else:
+            PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
 
 def arrival_proc(PIT):
     for i in range(len(arrival_list)):
