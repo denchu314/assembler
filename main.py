@@ -4,6 +4,7 @@ from assm_func import *
 
 args = sys.argv
 
+MOUTPUT_FILENAME = "media"
 OUTPUT_FILENAME = "a.bin"
 
 
@@ -16,66 +17,111 @@ else:
     print("input file: " + args[1])
 
 rfile = open(args[1], 'r')
+wfile_m = open(MOUTPUT_FILENAME, 'w')
 wfile = open(OUTPUT_FILENAME, 'wb')
 
 line = rfile.readlines()
 
 
-# declear functable
-funcTable = []
-funcTable.append(Func())
-funcTable[0].funcName = 'main'
-funcTable[0].defined = 1
-# buffer to write file
-# 16 byte in head of binary file is reserved to use jump for main
-file_descriptor = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+# declear arrivalTable
+#AT = [LabelTable()]
+AT = []
 
-# start address
-now_inst_addr = INSTRUCTION_BITS * len(file_descriptor)/8
+# declear departureTable
+#DT = [LabelTable()]
+DT = []
 
+# declear arrivalTable
+#DAT = [DepartureArrivalTable()]
+DAT = []
 
+# declear preprocessInstructinTable(PIT)
+#PIT = [InstructionTable()]
+PIT = []
+
+# declear completeInstructinTable(PIT)
+#CIT = [InstructionTable()]
+CIT = []
+
+# instruction bits
+InstBits = Bits()
+
+###################
+# PRIPROCESS
+###################
 for index, line in enumerate(line):
-    ###############################
-    # check Func define
+    print('In line:' + str(index)) 
+    #
+    # check arrival Label
     #
     string = line.split()
-    if (string[0][:] == 'main:'):
-        funcTable[0].funcAddr = now_inst_addr
-        funcTable[0].called = 1
-    elif (string[0][-1:] == ':'):
-        print("into call state")
-        print(string[0][0:-1])
-        funcTable.append(Func())
-        tindex = len(funcTable) - 1
-        #funcTable[len(funcTable)-1].setFuncName(string[0][0:-1])
-        funcTable[tindex].funcName = string[0][0:-1]
-        funcTable[tindex].funcAddr = now_inst_addr
-        funcTable[tindex].defined = 1
-        for i in range(len(funcTable)):
-            print(funcTable[i].funcName)
-            print(funcTable[i].funcAddr)
-        for lindex in range(len(arrival_line)):
-            now_inst_addr = analyze_file(arrival_line[lindex], bits, file_descriptor, now_inst_addr, index, funcTable)
-            viewDebugInfo(arrival_line[lindex].split()[0], bits)        
+    op = string[0]
+    
+    if (isArrivalLabel(string)):
+        arrivalLabel = string[0][0:-1]
+        AT.append(LabelTable(arrivalLabel, now_inst_addr, index_of_PI))
+    
+    #
+    # chack SYS instruction
+    #
+    elif (op == 'ori' or op =='call' or op == 'return' or op == 'arrival'):
+        if (op == 'ori'):
+            ori_proc(string[1], PIT) 
+        elif (op == 'call'):
+            call_proc(string[1], string[2], string[3], string[4], string[5], PIT, DT)
+        elif (op == 'return'):
+            return_proc(PIT)
+        elif (op == 'arrival'):
+            arrival_proc(PIT)
 
-    else: 
-        now_inst_addr = analyze_file(line, bits, file_descriptor, now_inst_addr, index, funcTable)           
-        
-        ###############################
-        # SYS
-        #
-    
-            #elif (string[0] == 'call'):
-             #   call_narg = len(string)
-              #  if (call_narg < 2):
-               #     print("Error:In line " + str(index) + ", num of call args must >= 2, these args are "  + str(call_narg))
-                #    if(call_narg == 2):
-    
-        viewDebugInfo(string[0], bits)        
-    
-        
-#write file
-file_descriptor[0] = funcTable[0].funcAddr + 0xC0000000
-for index in range(len(file_descriptor)):
-    write_to_file(wfile, file_descriptor[index])
+    #
+    # chack j or jal instruction
+    #
+    elif (op == 'j' or op == 'jal'):
+        if (isHex(string[1])):
+            PIT.append(InstructionTable(op, string[1]))
+        else:
+            PIT.append(InstructionTable(op, '0x0'))#pseudp label
+        DT.append(LabelTable(string[1], len(PIT)-1))
+
+    #
+    # set instruction on PIT if type == CR, LR, I
+    #
+    else:
+       PIT.append(InstructionTable(op, string[1], string[2], string[3])) 
+
+for i in range(len(PIT)):
+        wfile_m.write(PIT[i].op + ' ' + PIT[i].operand0 + ' ' + PIT[i].operand1 + ' ' + PIT[i].operand2 + '\n')
+#####################
+# REPLACE PHASE
+#####################
+
+#
+# make DepartureArrivalTable
+#
+for i in range(len(DT)):
+    detect = False
+    for j in range(len(AT)):
+        if (DT[i].labelName == AT[j].labelName):
+            detect = True
+            DAT.append(DepartureArrivalTable(DT[i].labelName, DT[i].labelIndex, AT[j].labelIndex))
+            
+    if (detect == False):
+        print('Error:There is no Arrival Label in file, ' + DT[i].labelName)
+        exit()
+
+#
+# make Complete Instruction Table
+#
+CIT = PIT
+
+for i in range(len(DAT)):
+    CIT[DAT[i].posOfDeparture].operand0 = hex((INSTRUCTION_BITS/8) * DAT[i].posOfArrival)
+
+
+#
+# binalize and write file
+#
+for i in range(len(CIT)):
+    write_to_file(wfile, binalize_instruction(CIT[i].op, CIT[i].operand0, CIT[i].operand1, CIT[i].operand2, InstBits, i))
 
