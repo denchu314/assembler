@@ -34,10 +34,29 @@ def isArrivalLabel(string):
 
 def makeCallList(label, call_arg0, call_arg1, call_arg2, call_arg3):
     call_list0 = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00']
-    call_arg0 = 'iAdd A0 ZERO ' + call_arg0 
-    call_arg1 = 'iAdd A1 ZERO ' + call_arg1 
-    call_arg2 = 'iAdd A2 ZERO ' + call_arg2 
-    call_arg3 = 'iAdd A3 ZERO ' + call_arg3 
+    if (isHex(call_arg0)):
+        call_arg0 = 'iAddi A0 ZERO ' + call_arg0
+    else:
+        call_arg0 = 'iAdd A0 ZERO ' + call_arg0
+
+    if (isHex(call_arg1)):
+        call_arg1 = 'iAddi A1 ZERO ' + call_arg1
+    else:
+        call_arg1 = 'iAdd A1 ZERO ' + call_arg1
+
+    if (isHex(call_arg2)):
+        call_arg2 = 'iAddi A2 ZERO ' + call_arg2
+    else:
+        call_arg2 = 'iAdd A2 ZERO ' + call_arg2
+
+    if (isHex(call_arg3)):
+        call_arg3 = 'iAddi A3 ZERO ' + call_arg3
+    else:
+        call_arg3 = 'iAdd A3 ZERO ' + call_arg3
+
+    #call_arg1 = 'iAdd A1 ZERO ' + call_arg1 
+    #call_arg2 = 'iAdd A2 ZERO ' + call_arg2 
+    #call_arg3 = 'iAdd A3 ZERO ' + call_arg3 
     #call_func_addr = 'jal ' + str(hex(call_func_addr))
     call_label = 'jal ' + label
     call_list1 =  ['lw A0 SP 0x0C', 'lw A1 SP 0x08', 'lw A2 SP 0x04', 'lw A3 SP 0x00', 'iAddi SP SP 0x10']
