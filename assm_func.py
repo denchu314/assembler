@@ -447,6 +447,7 @@ def ori_proc(finish_addr, PIT):
 
 def call_proc(departureLabel, arg0, arg1, arg2, arg3, PIT, DT):
     call_list = makeCallList(departureLabel, arg0, arg1, arg2, arg3)
+    #print(call_list)
     for i in range(len(call_list)):
         string = call_list[i].split()
         if (string[0] == 'jal'or string[0] == 'j'):
@@ -456,10 +457,8 @@ def call_proc(departureLabel, arg0, arg1, arg2, arg3, PIT, DT):
             else:
                 PIT.append(InstructionTable(op, '0x0', '0x0', '0x0'))#pseudp label
                 DT.append(LabelTable(string[1], len(PIT)-1))
-#            PIT.append(InstructionTable(string[0], '0x0')) #pseudo label
-#            DT.append(LabelTable(string[1], len(PIT)-1))
-#        else:
-#            PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
+        else:
+            PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
 
 def return_proc(PIT):
     for i in range(len(return_list)):
