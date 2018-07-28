@@ -8,7 +8,7 @@ PREPROCESSED_OUTPUT_FILENAME = "a.prep"
 COMPLETED_OUTPUT_FILENAME = "a.comp"
 OUTPUT_FILENAME = "a.bin"
 
-PC_INIT = 0x7c00
+PC_INIT = 0x4000
 
 bits = Bits()
 

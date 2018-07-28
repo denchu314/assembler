@@ -13,7 +13,7 @@ main:
 	iAdd	S0	S1	ZERO
 	iAdd	S0	S1	ZERO
 	iAdd	S0	S1	ZERO
-	call	hoge	ZERO	ZERO	ZERO	ZERO
+	call	hoge	ZERO	0x12	ZERO	0x23
 	iAdd	S0	S1	ZERO
 	iAdd	S0	S1	ZERO
 	iAdd	S0	S1	ZERO

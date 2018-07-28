@@ -33,7 +33,7 @@ def isArrivalLabel(string):
         return False
 
 def makeCallList(label, call_arg0, call_arg1, call_arg2, call_arg3):
-    call_list0 = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00']
+    call_list0 = ['iSubi SP SP 0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00']
     if (isHex(call_arg0)):
         call_arg0 = 'iAddi A0 ZERO ' + call_arg0
     else:
@@ -72,7 +72,7 @@ def makeCallList(label, call_arg0, call_arg1, call_arg2, call_arg3):
 
 #call_line = ['iAddi SP SP -0x10', 'sw A0 SP 0x0C', 'sw A1 SP 0x08', 'sw A2 SP 0x04', 'sw A3 SP 0x00','iAddi A0 ZERO '] + call_arg0 + ['iAddi A1 ZERO '] + call_arg1 + ['iAddi A2 ZERO '] + call_arg2 ['iAddi A3 ZERO '] + call_arg3 + ['jal ']
 
-arrival_list = ['iAddi SP SP -0x38', 'sw S0 SP 0x34', 'sw S1 SP 0x30', 'sw S2 SP 0x2C', 'sw S3 SP 0x28', 'sw S4 SP 0x24', 'sw S5 SP 0x20', 'sw S6 SP 0x1C', 'sw S7 SP 0x18', 'sw S8 SP 0x14', 'sw ASM SP 0x10', 'sw GP SP 0x0C', 'sw SP SP 0x08', 'sw FP SP 0x04', 'sw RA SP 0x00']
+arrival_list = ['iSubi SP SP 0x38', 'sw S0 SP 0x34', 'sw S1 SP 0x30', 'sw S2 SP 0x2C', 'sw S3 SP 0x28', 'sw S4 SP 0x24', 'sw S5 SP 0x20', 'sw S6 SP 0x1C', 'sw S7 SP 0x18', 'sw S8 SP 0x14', 'sw ASM SP 0x10', 'sw GP SP 0x0C', 'sw SP SP 0x08', 'sw FP SP 0x04', 'sw RA SP 0x00']
 
 return_list = ['lw S0 SP 0x34', 'lw S1 SP 0x30', 'lw S2 SP 0x2C', 'lw S3 SP 0x28', 'lw S4 SP 0x24', 'lw S5 SP 0x20', 'lw S6 SP 0x1C', 'lw S7 SP 0x18', 'lw S8 SP 0x14', 'lw ASM SP 0x10', 'lw GP SP 0x0C', 'lw SP SP 0x08', 'lw FP SP 0x04', 'lw RA SP 0x00', 'iAddi SP SP 0x38', 'jr RA']
 
