@@ -159,7 +159,10 @@ def set_type_and_op(op, InstBits, index):
     elif    op == 'xor':
         InstBits.type   = LR
         InstBits.op     = 0x2
-    elif    op == 'not':
+#    elif    op == 'not':
+#        InstBits.type   = LR
+#        InstBits.op     = 0x3
+    elif    op == 'ucmp':
         InstBits.type   = LR
         InstBits.op     = 0x3
     elif    op == 'Lsft':

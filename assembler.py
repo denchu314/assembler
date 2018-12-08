@@ -100,8 +100,8 @@ for index, line in enumerate(line):
     #
     # chack not or jr instruction
     #
-    elif (op == 'not'):
-            PIT.append(InstructionTable(op, string[1], string[2], 'ZERO'))
+    #elif (op == 'not'):
+    #        PIT.append(InstructionTable(op, string[1], string[2], 'ZERO'))
     elif (op == 'jr'):
             PIT.append(InstructionTable(op, 'ZERO', string[1], 'ZERO'))
 
