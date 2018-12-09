@@ -212,6 +212,9 @@ def set_type_and_op(op, InstBits, index):
     elif    op == 'cmpi':
         InstBits.type   = I
         InstBits.op     = 0xe
+    elif    op == 'ucmpi':
+        InstBits.type   = I
+        InstBits.op     = 0xf
 
     #J
     elif    op == 'j':
