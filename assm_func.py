@@ -437,6 +437,9 @@ def set_src1(src1, InstBits, index):
         exit()
 
 def set_minor_imm(minor_imm, InstBits, index):
+    if(isDec(minor_imm)):
+             minor_imm = hex(int(minor_imm))
+
     InstBits.minor_imm    = int(minor_imm, 16)
     if (InstBits.minor_imm > 0xffff):
         InstBits.minor_imm = 0xffff
@@ -444,6 +447,9 @@ def set_minor_imm(minor_imm, InstBits, index):
         exit()
 
 def set_major_imm(major_imm, InstBits, index):
+    if(isDec(major_imm)):
+             major_imm = hex(int(major_imm))
+
     InstBits.major_imm    = int(major_imm, 16)
     if (InstBits.major_imm > 0x3ffffff):
         InstBits.major_imm    = 0x3ffffff
@@ -506,6 +512,13 @@ def arrival_proc(PIT):
 #    for i in range(len(li_list)):
 #        string = li_list[i].split()
 #        PIT.append(InstructionTable(string[0], string[1], string[2], string[3])) 
+
+def isDec(val):
+    try:
+        int(val)
+        return True
+    except:
+        return False
 
 def isHex(val):
     try:
