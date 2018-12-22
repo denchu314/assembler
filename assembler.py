@@ -8,6 +8,9 @@ PREPROCESSED_OUTPUT_FILENAME = "a.prep"
 COMPLETED_OUTPUT_FILENAME = "a.comp"
 OUTPUT_FILENAME = "a.bin"
 
+SP_INIT = 0x20000
+FP_INIT = SP_INIT
+GP_INIT = 0x18000
 PC_INIT = 0x4000
 
 bits = Bits()
@@ -139,7 +142,8 @@ for i in range(len(DT)):
 CIT = PIT
 
 for i in range(len(DAT)):
-    CIT[DAT[i].posOfDeparture].operand0 = hex((INSTRUCTION_BITS/8) * DAT[i].posOfArrival + PC_INIT)
+    #CIT[DAT[i].posOfDeparture].operand0 = hex((INSTRUCTION_BITS/8) * DAT[i].posOfArrival + PC_INIT)
+    CIT[DAT[i].posOfDeparture].operand0 = hex((INSTRUCTION_BITS/8) * DAT[i].posOfArrival )
 
 if (vflag):
     for i in range(len(CIT)):
