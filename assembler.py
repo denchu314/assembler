@@ -18,17 +18,22 @@ bits = Bits()
 vflag = False
 
 if (len(args) < 2):
-    print("usage: " + args[0] + " [assembly_file_path] [-v]")
+    print("usage: " + args[0] + " [assembly_file_path] [-o output] [-v]")
     exit()
 else:
     print("input file: " + args[1])
 
-if (len(args) == 3):
-    if(args[2] == '-v'):
+for i in range(len(args)):
+    if (args[i] == "-v"):
         vflag = True
-    else:
-        print('Error:args[2]:' + args[2] + ' is not defined.')
-        exit()
+    elif (args[i] == "-o"):
+        OUTPUT_FILENAME = args[i+1]
+#if (len(args) == 3):
+#    if(args[2] == '-v'):
+#        vflag = True
+#    else:
+#        print('Error:args[2]:' + args[2] + ' is not defined.')
+#        exit()
 
 rfile = open(args[1], 'r')
 wfile_m = open(PREPROCESSED_OUTPUT_FILENAME, 'w')
