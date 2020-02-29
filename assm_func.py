@@ -473,8 +473,8 @@ def write_to_file(wfile, inst):
     wfile.write(bytearray([((inst & 0xFF000000) >> 24), ((inst & 0xFF0000) >> 16), ((inst & 0xFF00) >> 8), (inst & 0xFF)]))
 
 def ori_proc(finish_addr, PIT):
-    if (finish_addr < (INSTRUCTION_BITS/8) * len(PIT)):
-        print("In ori fin addr must over now addr. (now_addr, fin_addr) = (" + (INSTRUCTION_BITS/8) * len(PIT) + "," + finish_addr + ")")
+    if (int(finish_addr,16) < (INSTRUCTION_BITS>>3) * len(PIT)):
+        print("In ori fin addr must over now addr. (now_addr, fin_addr) = (" + hex((INSTRUCTION_BITS<<3) * len(PIT)) + "," + finish_addr + ")")
         exit()
     else:
         for i in range(len(PIT), int(finish_addr,16)/(INSTRUCTION_BITS/8)):
